@@ -121,6 +121,28 @@ void LTexture::setAlpha(Uint8 alpha)
 	SDL_SetTextureAlphaMod(mTexture, alpha);
 }
 
+
+SDL_Point rotatePoint(SDL_Point& centerPoint, float angle, SDL_Point refPoint)
+{
+	float s = sin(angle);
+	float c = cos(angle);
+
+	// translate point back to origin:
+	refPoint.x -= centerPoint.x;
+	refPoint.y -= centerPoint.y;
+
+	// rotate the point
+	float xnew = refPoint.x * c - refPoint.y * s;
+	float ynew = refPoint.x * s + refPoint.y * c;
+
+
+	// translate point back:
+	refPoint.x = xnew + centerPoint.x;
+	refPoint.y = ynew + centerPoint.y;
+
+	return refPoint;
+}
+
 void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
 {
 	//Set rendering space and render to screen
@@ -168,18 +190,52 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 		SDL_Point P0, P1, P2, P3, P4;
 		SDL_Point mP0, mP1, mP2, mP3, mP4;
 
-		P0 = { x0, y0 };
-		P1 = { x1, y0 };
-		P2 = { x1, y1 };
-		P3 = { x0, y1 };
-		P4 = { x0, y0 };
+		P0 = { x ,			 y };
+		P1 = { x + 2 * xCen, y };
+		P2 = { x + 2 * xCen, y + 2 * yCen };
+		P3 = { x ,			 y + 2 * yCen };
+		P4 = { x ,			 y };
 
 
-		mP0 = { x + mx0 + mWidth / 2,y + my0 + mHeight / 2 };
-		mP1 = { x + mx1 + mWidth / 2,y + my0 + mHeight / 2 };
-		mP2 = { x + mx1 + mWidth / 2,y + my1 + mHeight / 2 };
-		mP3 = { x + mx0 + mWidth / 2,y + my1 + mHeight / 2 };
-		mP4 = { x + mx0 + mWidth / 2,y + my0 + mHeight/2 };
+
+		SDL_Point dP0, dP1, dP2, dP3;
+
+		dP0 = { P0.x - mx0, P0.y - my0};
+		dP1 = { P1.x - mx1, P0.y - my0};
+		dP0 = { P0.x - mx0, P0.y - my0};
+		dP0 = { P0.x - mx0, P0.y - my0};
+
+
+
+
+
+			// Cool effect
+		//mP0 = { x + mx0 + mWidth / 2,y + my0 + mHeight / 2 };
+		//mP1 = { x - mx1 + mWidth / 2,y + my0 - mHeight / 2 };
+		//mP2 = { x + mx1 + mWidth / 2,y + my1 + mHeight / 2 };
+		//mP3 = { x - mx0 + mWidth / 2,y + my1 - mHeight / 2 };
+		//mP4 = { x + mx0 + mWidth / 2,y + my0 + mHeight/2 };
+
+		//mP0 = { x + mx0 ,y + my0  };
+		//mP1 = { x + mx1 ,y + my0  };
+		//mP2 = { x + mx1 ,y + my1  };
+		//mP3 = { x + mx0 ,y + my1  };
+		//mP4 = { x + mx0 ,y + my0  };
+
+		mP0 = { x + mx0 ,y + my0 };
+		mP1 = { x + mx1 ,y + my1 };
+		mP2 = { x + mx1 ,y + my1 };
+		mP3 = { x + mx0 ,y + my1 };
+		mP4 = { x + mx0 ,y + my0 };
+
+		SDL_Point centerPoint = { x + xCen, y + yCen };
+		mP0 = rotatePoint(centerPoint, angleRad, P0);
+		mP1 = rotatePoint(centerPoint, angleRad, P1);
+		mP2 = rotatePoint(centerPoint, angleRad, P2);
+		mP3 = rotatePoint(centerPoint, angleRad, P3);
+		mP3 = rotatePoint(centerPoint, angleRad, P3);
+		mP4 = mP0;
+
 
 		SDL_Point points[5] = { P0, P1, P2, P3, P4 };
 		SDL_Point mPoints[5] = { mP0, mP1, mP2, mP3, mP4 };
