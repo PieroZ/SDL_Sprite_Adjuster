@@ -6,6 +6,17 @@
 #include <string>
 #include <iostream>
 #include <algorithm>
+#include <fstream>
+
+#define DUMP(a) \
+    do { std::cout << #a " is value " << (a) << std::endl; } while(false)
+
+#define DUMPSTR_WNAME(os, name, a) \
+    do { (os) << (name) << " is value " << (a) << std::endl; } while(false)
+
+#define DUMPSTR(os, a) DUMPSTR_WNAME((os), #a, (a))
+
+
 
 //Screen dimension constants
 const int SCREEN_WIDTH = 1920;
@@ -50,6 +61,19 @@ void close();
 
 //Buttons objects
 LButton gButtons[TOTAL_BUTTONS];
+
+template <typename T>
+std::ostream& func(T t, std::ostream& os)
+{
+	DUMPSTR(os, t);
+	return os;
+}
+
+//template<typename T, typename... Args>
+//void func(T t, Args... args)
+//{
+//	Dump(t)
+//}
 
 
 bool init()
@@ -189,7 +213,7 @@ void close()
 
 int main(int argc, char* args[])
 {
-	gCharacterFilepath = "tir.png";
+	gCharacterFilepath = "high.png";
 	gBackgroundFilepath = "background2.png";
 
 	int xShadowOffset = 0;
@@ -198,7 +222,11 @@ int main(int argc, char* args[])
 	int heightCut = 0;
 	int xRotate = 0;
 	int yRotate = 0;
-	double angle = 0.0;
+	double angle = 45.0;
+
+	std::filebuf fb;
+	fb.open("high.txt", std::ios::out);
+	std::ostream os(&fb);
 
 	//Start up SDL and create window
 	if (!init())
@@ -247,7 +275,7 @@ int main(int argc, char* args[])
 
 						case SDLK_DOWN:
 							//gShadowTexture.setAlpha(gShadowAlpha= gShadowAlpha+30);
-							std::cout << " shadow Alpha = " << (int)gShadowAlpha << std::endl;
+							//std::cout << " shadow Alpha = " << (int)gShadowAlpha << std::endl;
 							break;
 
 						case SDLK_LEFT:
@@ -255,6 +283,22 @@ int main(int argc, char* args[])
 
 						case SDLK_RIGHT:
 							break;
+						case SDLK_SPACE:
+
+							//std::ostream dump();
+							//DUMPSTR(dump, xShadowOffset);
+
+							DUMPSTR(os, xShadowOffset );
+							DUMPSTR(os, yShadowOffset );
+							DUMPSTR(os, widthCut );
+							DUMPSTR(os, heightCut );
+
+							/*DUMP(xShadowOffset);
+							DUMP(yShadowOffset);
+							DUMP(widthCut);
+							DUMP(heightCut);*/
+							break;
+
 						case SDLK_ESCAPE:
 							quit = true;
 							break;
@@ -275,7 +319,7 @@ int main(int argc, char* args[])
 					case SDLK_LEFT:
 					case SDLK_a:
 						xShadowOffset -= 1;
-						std::cout << xShadowOffset << std::endl;
+					//	std::cout << xShadowOffset << std::endl;
 						break;
 					case SDLK_RIGHT:
 					case SDLK_d:
@@ -291,13 +335,13 @@ int main(int argc, char* args[])
 						yShadowOffset++;
 						break;
 					case SDLK_j:
-						widthCut++;
+					//	widthCut++;
 						break;
 					case SDLK_k:
 						heightCut++;
 						break;
 					case SDLK_u:
-						widthCut--;
+					//	widthCut--;
 						break;
 					case SDLK_i:
 						heightCut--;
@@ -322,6 +366,14 @@ int main(int argc, char* args[])
 
 					case SDLK_5:
 						yRotate++;
+						break;
+
+					case SDLK_7:
+						angle = angle + 3;
+						break;
+
+					case SDLK_8:
+						angle = angle - 3;
 						break;
 					}
 
@@ -360,7 +412,7 @@ int main(int argc, char* args[])
 
 				SDL_Rect clip = { 0,0, widthShadow, heightShadow };
 				SDL_Point center = { gShadowTexture.getWidth()/2 - xRotate, gShadowTexture.getHeight() / 2 - yRotate };
-				gShadowTexture.render(xShadow, yShadow, &clip, angle=angle +0.2, &center);
+				gShadowTexture.render(xShadow, yShadow, &clip, angle, &center, SDL_FLIP_NONE, 0, 0);
 
 				gCharacterTexture.render(x, y);
 
@@ -376,5 +428,6 @@ int main(int argc, char* args[])
 	//Free resources and close SDL
 	close();
 
+	fb.close();
 	return 0;
 }

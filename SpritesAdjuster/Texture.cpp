@@ -143,7 +143,7 @@ SDL_Point rotatePoint(SDL_Point& centerPoint, float angle, SDL_Point refPoint)
 	return refPoint;
 }
 
-void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip)
+void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* center, SDL_RendererFlip flip, int w, int h)
 {
 	//Set rendering space and render to screen
 	SDL_Rect renderQuad = { x, y, mWidth, mHeight };
@@ -151,8 +151,8 @@ void LTexture::render(int x, int y, SDL_Rect* clip, double angle, SDL_Point* cen
 	//Set clip rendering dimensions
 	if (clip != NULL)
 	{
-		renderQuad.w = clip->w;
-		renderQuad.h = clip->h;
+		renderQuad.w = clip->w - w;
+		renderQuad.h = clip->h - h;
 	}
 
 	int x0, x1, y0, y1;
