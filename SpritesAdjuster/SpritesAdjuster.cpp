@@ -213,7 +213,8 @@ void close()
 
 int main(int argc, char* args[])
 {
-	gCharacterFilepath = "high.png";
+	std::string fileName = "high";
+	gCharacterFilepath = fileName + ".png";
 	gBackgroundFilepath = "background2.png";
 
 	int xShadowOffset = 0;
@@ -225,7 +226,8 @@ int main(int argc, char* args[])
 	double angle = 45.0;
 
 	std::filebuf fb;
-	fb.open("high.txt", std::ios::out);
+	std::string filePath = fileName + ".txt";
+	fb.open(filePath, std::ios::out);
 	std::ostream os(&fb);
 
 	//Start up SDL and create window
